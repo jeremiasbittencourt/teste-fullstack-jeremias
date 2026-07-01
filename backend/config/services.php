@@ -35,4 +35,19 @@ return [
         ],
     ],
 
+    // API externa fake que alimenta o módulo de pedidos.
+    'fakestore' => [
+        'base_url' => env('FAKESTORE_BASE_URL', 'https://fakestoreapi.com'),
+        'timeout' => (int) env('FAKESTORE_TIMEOUT', 15),
+        'retries' => (int) env('FAKESTORE_RETRIES', 3),
+        'retry_backoff' => (int) env('FAKESTORE_RETRY_BACKOFF', 200), // ms
+        'rate_limit' => (int) env('FAKESTORE_RATE_LIMIT', 30), // req/s
+        'page_size' => (int) env('FAKESTORE_PAGE_SIZE', 50),
+    ],
+
+    // Webhook do N8N para notificações orientadas a eventos.
+    'n8n' => [
+        'webhook_url' => env('N8N_WEBHOOK_URL'),
+    ],
+
 ];
