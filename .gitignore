@@ -1,0 +1,14 @@
+# Variáveis de ambiente do docker-compose (nunca versionar segredos)
+.env
+.env.backup
+.env.production
+
+# Dependências / build
+node_modules
+dist
+
+# SO / editores
+.DS_Store
+Thumbs.db
+.idea
+.vscode

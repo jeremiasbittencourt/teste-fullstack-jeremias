@@ -2,9 +2,13 @@
 
 use App\Http\Controllers\AffiliateController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\HealthController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
+
+// Health check (público) — status de MySQL, Redis e worker.
+Route::get('/health', [HealthController::class, 'index']);
 
 // Auth (público)
 Route::post('/login', [AuthController::class, 'login']);
