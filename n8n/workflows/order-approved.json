@@ -1,0 +1,102 @@
+{
+  "name": "Pedido Aprovado",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "order-approved",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "id": "webhook-approved",
+      "name": "Webhook order-approved",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [240, 300],
+      "webhookId": "order-approved"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json[\"body\"][\"new_status\"] }}",
+              "value2": "approved"
+            }
+          ]
+        }
+      },
+      "id": "if-approved",
+      "name": "É aprovado?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [480, 300]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "message",
+              "value": "=✅ Pedido #{{ $json[\"body\"][\"order_id\"] }} APROVADO — afiliado {{ $json[\"body\"][\"affiliate_id\"] }}, valor R$ {{ $json[\"body\"][\"total_value\"] }} em {{ $json[\"body\"][\"occurred_at\"] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "set-message",
+      "name": "Formatar mensagem",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [720, 220]
+    },
+    {
+      "parameters": {
+        "requestMethod": "POST",
+        "url": "https://webhook.site/REPLACE-WITH-YOUR-MOCK",
+        "jsonParameters": true,
+        "options": {},
+        "bodyParametersJson": "={\"text\": {{ JSON.stringify($json[\"message\"]) }} }"
+      },
+      "id": "http-notify",
+      "name": "Notificar (Slack/Discord/Email)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [960, 220]
+    },
+    {
+      "parameters": {
+        "requestMethod": "POST",
+        "url": "https://webhook.site/REPLACE-WITH-YOUR-SHEETS-MOCK",
+        "jsonParameters": true,
+        "options": {},
+        "bodyParametersJson": "={\"order_id\": {{ $json[\"body\"][\"order_id\"] }}, \"affiliate_id\": {{ $json[\"body\"][\"affiliate_id\"] }}, \"total_value\": {{ $json[\"body\"][\"total_value\"] }}, \"approved_at\": {{ JSON.stringify($json[\"body\"][\"occurred_at\"]) }} }"
+      },
+      "id": "http-sheets",
+      "name": "Registrar no Google Sheets",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [960, 380]
+    }
+  ],
+  "connections": {
+    "Webhook order-approved": {
+      "main": [[{ "node": "É aprovado?", "type": "main", "index": 0 }]]
+    },
+    "É aprovado?": {
+      "main": [
+        [
+          { "node": "Formatar mensagem", "type": "main", "index": 0 },
+          { "node": "Registrar no Google Sheets", "type": "main", "index": 0 }
+        ],
+        []
+      ]
+    },
+    "Formatar mensagem": {
+      "main": [[{ "node": "Notificar (Slack/Discord/Email)", "type": "main", "index": 0 }]]
+    }
+  },
+  "active": false,
+  "settings": {},
+  "pinData": {}
+}

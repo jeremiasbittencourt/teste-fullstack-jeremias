@@ -1,0 +1,143 @@
+{
+  "name": "Pedido Cancelado",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "order-cancelled",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "id": "webhook-cancelled",
+      "name": "Webhook order-cancelled",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [240, 300],
+      "webhookId": "order-cancelled"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json[\"body\"][\"new_status\"] }}",
+              "value2": "cancelled"
+            }
+          ]
+        }
+      },
+      "id": "if-cancelled",
+      "name": "É cancelado?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "requestMethod": "GET",
+        "url": "=http://app:8000/api/affiliates/{{ $json[\"body\"][\"affiliate_id\"] }}/summary",
+        "jsonParameters": true,
+        "headerParametersJson": "={\"Authorization\": \"Bearer REPLACE_WITH_SANCTUM_TOKEN\", \"Accept\": \"application/json\"}",
+        "options": {}
+      },
+      "id": "http-summary",
+      "name": "Consultar summary do afiliado",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [700, 220]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{ $json[\"data\"][\"cancellation_rate\"] }}",
+              "operation": "larger",
+              "value2": 30
+            }
+          ]
+        }
+      },
+      "id": "if-rate",
+      "name": "Taxa > 30%?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [940, 220]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "alert",
+              "value": "=⚠️ ATENÇÃO: afiliado {{ $json[\"data\"][\"affiliate\"][\"name\"] }} com taxa de cancelamento de {{ $json[\"data\"][\"cancellation_rate\"] }}% ({{ $json[\"data\"][\"total_orders\"] }} pedidos)."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "set-alert",
+      "name": "Montar alerta",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [1180, 140]
+    },
+    {
+      "parameters": {
+        "requestMethod": "POST",
+        "url": "https://webhook.site/REPLACE-WITH-YOUR-ALERT-MOCK",
+        "jsonParameters": true,
+        "options": {},
+        "bodyParametersJson": "={\"text\": {{ JSON.stringify($json[\"alert\"]) }} }"
+      },
+      "id": "http-alert",
+      "name": "Disparar alerta",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [1420, 140]
+    },
+    {
+      "parameters": {
+        "requestMethod": "POST",
+        "url": "https://webhook.site/REPLACE-WITH-YOUR-LOG-MOCK",
+        "jsonParameters": true,
+        "options": {},
+        "bodyParametersJson": "={\"order_id\": {{ $json[\"body\"][\"order_id\"] }}, \"affiliate_id\": {{ $json[\"body\"][\"affiliate_id\"] }}, \"cancelled_at\": {{ JSON.stringify($json[\"body\"][\"occurred_at\"]) }} }"
+      },
+      "id": "http-log",
+      "name": "Registrar cancelamento",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [700, 420]
+    }
+  ],
+  "connections": {
+    "Webhook order-cancelled": {
+      "main": [[{ "node": "É cancelado?", "type": "main", "index": 0 }]]
+    },
+    "É cancelado?": {
+      "main": [
+        [
+          { "node": "Consultar summary do afiliado", "type": "main", "index": 0 },
+          { "node": "Registrar cancelamento", "type": "main", "index": 0 }
+        ],
+        []
+      ]
+    },
+    "Consultar summary do afiliado": {
+      "main": [[{ "node": "Taxa > 30%?", "type": "main", "index": 0 }]]
+    },
+    "Taxa > 30%?": {
+      "main": [
+        [{ "node": "Montar alerta", "type": "main", "index": 0 }],
+        []
+      ]
+    },
+    "Montar alerta": {
+      "main": [[{ "node": "Disparar alerta", "type": "main", "index": 0 }]]
+    }
+  },
+  "active": false,
+  "settings": {},
+  "pinData": {}
+}

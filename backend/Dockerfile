@@ -1,10 +1,10 @@
 # Imagem única usada pelos serviços "app" (API) e "worker" (queue:work).
 FROM php:8.3-cli AS base
 
-# Extensões necessárias: pdo_mysql (banco) e pcntl (sinais do queue:work).
+# Extensões: pdo_mysql (banco), pcntl (sinais do queue:work), pdo_sqlite (testes).
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends libzip-dev unzip git \
-    && docker-php-ext-install pdo_mysql pcntl \
+    && apt-get install -y --no-install-recommends libzip-dev libsqlite3-dev unzip git \
+    && docker-php-ext-install pdo_mysql pdo_sqlite pcntl \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
