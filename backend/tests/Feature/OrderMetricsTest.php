@@ -39,13 +39,15 @@ class OrderMetricsTest extends TestCase
 
         $response->assertOk()
             ->assertJsonPath('data.total_orders', 5)
-            ->assertJsonPath('data.total_revenue', 250)
-            ->assertJsonPath('data.average_ticket', 83.33)
-            ->assertJsonPath('data.cancellation_rate', 20)
             ->assertJsonPath('data.by_status.approved', 2)
             ->assertJsonPath('data.by_status.pending', 1)
             ->assertJsonPath('data.by_status.cancelled', 1)
             ->assertJsonPath('data.by_status.refunded', 1);
+
+        // Valores monetários com comparação loose (evita rigidez int/float no JSON).
+        $this->assertEquals(250, $response->json('data.total_revenue'));
+        $this->assertEquals(83.33, $response->json('data.average_ticket'));
+        $this->assertEquals(20, $response->json('data.cancellation_rate'));
     }
 
     public function test_metrics_are_cached_and_invalidated_on_status_change(): void
