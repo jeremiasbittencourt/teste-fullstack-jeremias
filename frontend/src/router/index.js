@@ -26,6 +26,16 @@ const routes = [
         component: () => import('../views/DashboardView.vue'),
       },
       {
+        path: 'orders',
+        name: 'orders',
+        component: () => import('../views/OrdersView.vue'),
+      },
+      {
+        path: 'affiliates',
+        name: 'affiliates',
+        component: () => import('../views/AffiliatesView.vue'),
+      },
+      {
         path: 'users',
         name: 'users',
         component: () => import('../views/UsersView.vue'),

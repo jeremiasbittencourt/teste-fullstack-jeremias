@@ -26,10 +26,10 @@ function onRegisterSuccess(message) {
     <!-- Logo -->
     <div class="text-center mb-8">
       <div class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg" style="background: var(--color-primary)">
-        <span class="text-white font-bold text-2xl">ST</span>
+        <span class="text-white font-bold text-2xl">OM</span>
       </div>
-      <h1 class="text-2xl font-bold text-white">Smart Team</h1>
-      <p class="text-sm mt-1" style="color: var(--color-text-sidebar)">Controle de Chamados de Onboarding</p>
+      <h1 class="text-2xl font-bold text-white">Orders</h1>
+      <p class="text-sm mt-1" style="color: var(--color-text-sidebar)">Gestão de Pedidos de Afiliados</p>
     </div>
 
     <!-- Card -->

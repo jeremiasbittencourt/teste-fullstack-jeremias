@@ -13,11 +13,9 @@ const showUserMenu = ref(false)
 
 const pageTitles = {
   'dashboard': 'Dashboard',
-  'ticket-create': 'Chamados > Novo Chamado',
-  'ticket-report': 'Chamados > Relatório',
-  'employee-create': 'Colaboradores > Novo Colaborador',
-  'employee-detail': 'Colaboradores > Detalhe',
-  'admin-catalog': 'Cadastros',
+  'orders': 'Pedidos',
+  'affiliates': 'Afiliados',
+  'users': 'Usuários',
 }
 
 function closeUserMenu(e) {
@@ -29,7 +27,8 @@ function closeUserMenu(e) {
 onMounted(async () => {
   document.addEventListener('click', closeUserMenu)
   try {
-    const { data } = await api.get('/tickets', { params: { status: 'blocked,form_modified', per_page: 1 } })
+    // Sino de notificações = pedidos pendentes aguardando ação.
+    const { data } = await api.get('/orders', { params: { status: 'pending', per_page: 1 } })
     staleCount.value = data.meta?.total || 0
   } catch {}
 })
@@ -42,7 +41,7 @@ onMounted(async () => {
         <Menu :size="20" />
       </button>
       <h1 class="text-base font-semibold" style="color: var(--color-text-primary)">
-        {{ pageTitles[route.name] || 'Smart Team' }}
+        {{ pageTitles[route.name] || 'Orders' }}
       </h1>
     </div>
 

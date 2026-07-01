@@ -24,6 +24,18 @@ const menuItems = computed(() => [
     to: { name: 'dashboard' },
   },
   {
+    key: 'orders',
+    label: 'Pedidos',
+    icon: ShoppingCart,
+    to: { name: 'orders' },
+  },
+  {
+    key: 'affiliates',
+    label: 'Afiliados',
+    icon: Users,
+    to: { name: 'affiliates' },
+  },
+  {
     key: 'usuarios',
     label: 'Usuários',
     icon: UserCog,
@@ -75,9 +87,9 @@ watch(() => route.name, () => {
     <div class="flex items-center justify-between h-16 px-4 shrink-0" style="border-bottom: 1px solid rgba(255,255,255,0.08)">
       <RouterLink :to="{ name: 'dashboard' }" class="flex items-center gap-3 overflow-hidden" @click="emit('close')">
         <div class="w-9 h-9 rounded-lg flex items-center justify-center shrink-0" style="background: var(--color-primary)">
-          <span class="text-white font-bold text-sm">ST</span>
+          <span class="text-white font-bold text-sm">OM</span>
         </div>
-        <span v-if="!collapsed" class="text-white font-semibold text-lg whitespace-nowrap">Smart Team</span>
+        <span v-if="!collapsed" class="text-white font-semibold text-lg whitespace-nowrap">Orders</span>
       </RouterLink>
       <button v-if="mobileOpen" @click="emit('close')" class="lg:hidden p-1 rounded" style="color: var(--color-text-sidebar)">
         <X :size="20" />
