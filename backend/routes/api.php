@@ -23,6 +23,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/orders/{order}/status', [OrderController::class, 'updateStatus']);
 
     // Afiliados
+    Route::get('/affiliates', [AffiliateController::class, 'index']);
     Route::get('/affiliates/{id}/summary', [AffiliateController::class, 'summary'])->whereNumber('id');
 
     // Admin only — gestão de usuários (auth do dashboard)

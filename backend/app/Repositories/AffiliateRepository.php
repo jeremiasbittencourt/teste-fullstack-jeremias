@@ -5,12 +5,25 @@ namespace App\Repositories;
 use App\Enums\OrderStatus;
 use App\Models\Affiliate;
 use App\Models\Order;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
 
 class AffiliateRepository
 {
     public function find(int $id): ?Affiliate
     {
         return Affiliate::find($id);
+    }
+
+    /**
+     * Lista paginada de afiliados (para dropdown de filtro e página de afiliados).
+     */
+    public function paginate(?string $search, int $perPage = 100): LengthAwarePaginator
+    {
+        return Affiliate::query()
+            ->when($search, fn (Builder $q, string $s) => $q->where('name', 'like', "%{$s}%"))
+            ->orderBy('name')
+            ->paginate($perPage);
     }
 
     /**
