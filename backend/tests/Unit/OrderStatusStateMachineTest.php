@@ -5,6 +5,7 @@ namespace Tests\Unit;
 use App\Enums\OrderStatus;
 use App\Exceptions\InvalidStatusTransitionException;
 use App\Support\OrderStatusStateMachine;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class OrderStatusStateMachineTest extends TestCase
@@ -18,9 +19,7 @@ class OrderStatusStateMachineTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider validTransitions
-     */
+    #[DataProvider('validTransitions')]
     public function test_allows_valid_transitions(OrderStatus $from, OrderStatus $to): void
     {
         $this->assertTrue(OrderStatusStateMachine::canTransition($from, $to));
@@ -41,9 +40,7 @@ class OrderStatusStateMachineTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider invalidTransitions
-     */
+    #[DataProvider('invalidTransitions')]
     public function test_rejects_invalid_transitions(OrderStatus $from, OrderStatus $to): void
     {
         $this->assertFalse(OrderStatusStateMachine::canTransition($from, $to));
