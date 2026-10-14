@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(php artisan:*)",
-      "WebFetch(domain:developers.cora.com.br)"
+      "WebFetch(domain:developers.cora.com.br)",
+      "Bash(git checkout *)",
+      "Bash(git commit --quiet -m ' *)"
     ]
   }
 }
